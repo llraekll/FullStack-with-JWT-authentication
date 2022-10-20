@@ -1,5 +1,6 @@
 import { createContext, useState, useEffect } from 'react'
 import jwt_decode from 'jwt-decode'
+import { useHistory } from 'react-router-dom';
 
 const AuthContext = createContext()
 
@@ -8,10 +9,12 @@ export default AuthContext;
 
 export const AuthProvider = ({children}) => {
 
+    
 
+    let [ authTokens, setauthTokens ] = useState(()=> localStorage.getItem('authTokens') ? JSON.parse(localStorage.getItem('authTokens')) : null)
+    let [ user, setUser ] = useState(()=> localStorage.getItem('authTokens') ? jwt_decode(localStorage.getItem('authTokens')) : null)
 
-    let [ authTokens, setauthTokens ] = useState(null)
-    let [ user, setUser ] = useState(null)
+    const history = useHistory()
 
     let loginUser = async (e) => {
         e.preventDefault()
@@ -28,6 +31,7 @@ export const AuthProvider = ({children}) => {
             setauthTokens(data)
             setUser(jwt_decode(data.access))
             localStorage.setItem('authTokens', JSON.stringify(data))
+            history.push('/')
         }else{
             alert('Something is wrong and I dont like it')
         }
